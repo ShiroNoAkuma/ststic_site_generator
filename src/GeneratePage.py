@@ -2,7 +2,7 @@ import os
 from ExtractTitle import extract_title
 from BlockToHtml import markdown_to_html_node
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath='/'):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
     if os.path.isfile(from_path):
@@ -21,12 +21,15 @@ def generate_page(from_path, template_path, dest_path):
     read_template = read_template.replace("{{ Title }}", title)
     read_template = read_template.replace("{{ Content }}", content)
 
+    read_template = read_template.replace('href="/', f'href="{basepath}')
+    read_template = read_template.replace('src="/', f'src="{basepath}')
+
     os.makedirs(os.path.dirname(dest_path) or ".", exist_ok=True)
 
     with open(dest_path, "w") as f:
             f.write(read_template)
 
-def generate_page_recursive(dir_path_content, template_path, dest_dir_path='/public'):
+def generate_page_recursive(dir_path_content, template_path, dest_dir_path='/public', basepath='/'):
     print(f"Generating page from {dir_path_content} to {dest_dir_path} using {template_path}")
 
     for item in os.listdir(dir_path_content):
@@ -53,6 +56,9 @@ def generate_page_recursive(dir_path_content, template_path, dest_dir_path='/pub
 
             read_template = read_template.replace("{{ Title }}", title)
             read_template = read_template.replace("{{ Content }}", content)
+
+            read_template = read_template.replace('href="/', f'href="{basepath}')
+            read_template = read_template.replace('src="/', f'src="{basepath}')
 
             dest_path = os.path.splitext(dest_path)[0] + ".html"
 
